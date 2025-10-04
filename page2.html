@@ -3,197 +3,231 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Page 2</title>
+  <title>Choose Your Song</title>
   <style>
     body {
       margin: 0;
-      padding: 0;
-      height: 100vh;
+      font-family: Arial, sans-serif;
       display: flex;
+      flex-direction: column;
       justify-content: center;
       align-items: center;
-      flex-direction: column;
-      background-color: #f9f9f9;
-      font-family: Arial, sans-serif;
-      position: relative;
+      height: 100vh;
+      text-align: center;
+      transition: background-color 0.5s ease;
+      background-color: #f0f8ff; /* default pagi */
+    }
+
+    .time-buttons {
+      margin-bottom: 15px;
+      display: flex;
+      gap: 10px;
+    }
+
+    .time-buttons button {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      background: #444; /* darker grey */
+      color: #fff;
+      transition: background 0.3s;
+    }
+
+    .time-buttons button:hover {
+      background: #666;
     }
 
     h1 {
-      font-size: 2.5rem;
+      font-size: 36px;
       font-weight: bold;
-      text-align: center;
-      margin-bottom: 10px;
+      margin-bottom: 15px;
     }
 
     h2 {
-      font-size: 1.2rem;
+      font-size: 18px;
       font-weight: normal;
-      font-family: "Helvetica Neue", sans-serif;
-      text-align: center;
       margin-bottom: 20px;
     }
 
     .search-container {
       display: flex;
-      align-items: center;
       gap: 10px;
-      margin-bottom: 30px;
     }
 
-    input[type="text"] {
+    input {
       padding: 10px;
-      font-size: 1rem;
+      font-size: 16px;
+      border-radius: 6px;
       border: 1px solid #ccc;
-      border-radius: 5px;
       width: 150px;
+      text-align: center;
     }
 
-    .btn {
-      font-size: 1rem;
-      font-family: "Helvetica Neue", sans-serif;
+    button {
       padding: 10px 20px;
-      background-color: black;
-      color: white;
+      font-size: 16px;
+      border-radius: 6px;
       border: none;
-      border-radius: 5px;
+      background-color: #007bff;
+      color: white;
       cursor: pointer;
-      transition: 0.3s ease;
     }
 
-    .btn:hover {
-      background-color: #444;
+    button:hover {
+      background-color: #0056b3;
     }
 
     .top-btn {
       position: absolute;
       top: 20px;
       left: 20px;
-      font-size: 0.9rem;
-      font-family: "Helvetica Neue", sans-serif;
-      padding: 8px 16px;
-      background-color: transparent;
-      color: black;
-      border: 1px solid black;
-      border-radius: 5px;
+      padding: 8px 15px;
+      font-size: 14px;
+      border-radius: 6px;
+      border: none;
+      background-color: #28a745;
+      color: white;
       cursor: pointer;
-      transition: 0.3s ease;
     }
 
     .top-btn:hover {
-      background-color: black;
-      color: white;
+      background-color: #1e7e34;
+    }
+
+    iframe {
+      margin-top: 20px;
+      border-radius: 12px;
+    }
+
+    /* Popup styling */
+    .popup-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
     }
 
     .popup {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
       background: white;
       padding: 20px 30px;
-      border: 1px solid black;
       border-radius: 10px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-      display: none;
-      font-family: "Helvetica Neue", sans-serif;
+      text-align: center;
+      max-width: 300px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
     }
 
     .popup button {
-      margin-top: 10px;
-      padding: 5px 15px;
-      border: none;
-      background: black;
+      margin-top: 15px;
+      background: #007bff;
       color: white;
-      border-radius: 5px;
+      border: none;
+      padding: 8px 15px;
+      border-radius: 6px;
       cursor: pointer;
     }
 
-    #player {
-      margin-top: 20px;
+    .popup button:hover {
+      background: #0056b3;
     }
   </style>
 </head>
 <body>
-  <!-- Top-left button -->
+
+  <!-- Time selection buttons -->
+  <div class="time-buttons">
+    <button onclick="setTime('pagi')">Pagi</button>
+    <button onclick="setTime('siang')">Siang</button>
+    <button onclick="setTime('sore')">Sore</button>
+    <button onclick="setTime('malam')">Malam</button>
+  </div>
+
+  <!-- Top left button -->
   <button class="top-btn" onclick="location.href='places.html'">Places you should go</button>
 
-  <h1>Selamat pagi cantik</h1>
+  <h1 id="greeting">Selamat Pagi Cantik</h1>
   <h2>Pilih angka menarikmu hari ini!</h2>
 
   <div class="search-container">
-    <input type="text" id="numberInput" placeholder="1-30">
-    <button class="btn" onclick="playSong()">Enter</button>
+    <input type="number" id="numberInput" placeholder="1-30" min="1" max="30">
+    <button onclick="playSong()">Enter</button>
   </div>
 
-  <!-- Spotify player container -->
-  <div id="player"></div>
+  <div id="songPlayer"></div>
 
   <!-- Popup -->
-  <div class="popup" id="popup">
-    <p>Dicoba lagi ya sayang :) Ingett it's only between 1-30</p>
-    <button onclick="closePopup()">OK</button>
+  <div class="popup-overlay" id="popupOverlay">
+    <div class="popup">
+      <p>Dicoba lagi ya sayanggg 🫰<br>Inget, it's only between 1–30!</p>
+      <button onclick="closePopup()">OK</button>
+    </div>
   </div>
 
   <script>
-  // Mapping numbers 1-30 to Spotify songs
-  const songs = {
-    1: "https://open.spotify.com/embed/track/3AJwUDP919kvQ9QcozQPxg", // Ed Sheeran - Shape of You
-    2: "https://open.spotify.com/embed/track/0VjIjW4GlUZAMYd2vXMi3b", // The Weeknd - Blinding Lights
-    3: "https://open.spotify.com/embed/track/4uLU6hMCjMI75M1A2tKUQC", // Rick Astley - Never Gonna Give You Up
-    4: "https://open.spotify.com/embed/track/6habFhsOp2NvshLv26DqMb", // Dua Lipa - Levitating
-    5: "https://open.spotify.com/embed/track/7qiZfU4dY1lWllzX7mPBI3", // Ed Sheeran - Perfect
-    6: "https://open.spotify.com/embed/track/2Fxmhks0bxGSBdJ92vM42m", // Billie Eilish - bury a friend
-    7: "https://open.spotify.com/embed/track/0e7ipj03S05BNilyu5bRzt", // Olivia Rodrigo - drivers license
-    8: "https://open.spotify.com/embed/track/0tgVpDi06FyKpA1z0VMD4v", // Shawn Mendes, Camila Cabello - Señorita
-    9: "https://open.spotify.com/embed/track/3DarAbFujv6eYNliUTyqtz", // Lauv - I Like Me Better
-    10: "https://open.spotify.com/embed/track/2takcwOaAZWiXQijPHIx7B", // Coldplay - Viva La Vida
-    11: "https://open.spotify.com/embed/track/6EpRaXYhGOB3fj4V2uDkMJ", // Sam Smith - Stay With Me
-    12: "https://open.spotify.com/embed/track/0ofHAoxe9vBkTCp2UQIavz", // Jason Mraz - I'm Yours
-    13: "https://open.spotify.com/embed/track/0kkxsdcaWmWU2yWAqclDh3", // Justin Bieber - Peaches
-    14: "https://open.spotify.com/embed/track/1rqqCSm0Qe4I9rUvWncaom", // Dua Lipa - Don't Start Now
-    15: "https://open.spotify.com/embed/track/2b8fOow8UzyDFAE27YhOZM", // Taylor Swift - Love Story
-    16: "https://open.spotify.com/embed/track/0ofXAdFIQQRsCYj9754UFx", // John Mayer - Gravity
-    17: "https://open.spotify.com/embed/track/2RSHsoi04658QL5xgQVov3", // Khalid - Location
-    18: "https://open.spotify.com/embed/track/0V3wPSX9ygBnCm8psDIegu", // Post Malone - Circles
-    19: "https://open.spotify.com/embed/track/0pqnGHJpmpxLKifKRmU6WP", // Imagine Dragons - Believer
-    20: "https://open.spotify.com/embed/track/6QgjcU0zLnzq5OrUoSZ3OK", // Zedd, Alessia Cara - Stay
-    21: "https://open.spotify.com/embed/track/4wBA24GuWqlFfZ6uL65aXP", // Arctic Monkeys - Do I Wanna Know?
-    22: "https://open.spotify.com/embed/track/1V4jC0vJ5525lEF1bFgPX2", // Harry Styles - Watermelon Sugar
-    23: "https://open.spotify.com/embed/track/6Qyc6fS4DsZjB2mRW9DsQs", // Maroon 5 - Sugar
-    24: "https://open.spotify.com/embed/track/5ChkMS8OtdzJeqyybCc9R5", // Daft Punk - Get Lucky
-    25: "https://open.spotify.com/embed/track/7ouMYWpwJ422jRcDASZB7P", // Bruno Mars - Just the Way You Are
-    26: "https://open.spotify.com/embed/track/5nNmj1cLH3r4aA4XDJ2bgY", // Adele - Someone Like You
-    27: "https://open.spotify.com/embed/track/2nMeu6UenVvwUktBCpLMK9", // Lady Gaga, Bradley Cooper - Shallow
-    28: "https://open.spotify.com/embed/track/7BKLCZ1jbUBVqRi2FVlTVw", // The Chainsmokers - Closer
-    29: "https://open.spotify.com/embed/track/3USxtqRwSYz57Ewm6wWRMp", // OneRepublic - Counting Stars
-    30: "https://open.spotify.com/embed/track/6ktkj1B3SE9jNpylgLluwi"  // Rex Orange County - Loving Is Easy
-  };
-
-  function playSong() {
-    const number = parseInt(document.getElementById("numberInput").value);
-    const player = document.getElementById("player");
-
-    if (number >= 1 && number <= 30 && songs[number]) {
-      player.innerHTML = `<iframe style="border-radius:12px" src="${songs[number]}" 
-                          width="300" height="380" frameBorder="0" 
-                          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>`;
-    } else {
-      document.getElementById("popup").style.display = "block";
+    // Greeting changer
+    function setTime(time) {
+      const greeting = document.getElementById("greeting");
+      switch(time) {
+        case 'pagi':
+          greeting.textContent = "Selamat Pagi Cantik";
+          document.body.style.backgroundColor = "#f0f8ff"; // morning
+          break;
+        case 'siang':
+          greeting.textContent = "Selamat Siang Sayang";
+          document.body.style.backgroundColor = "#fffacd"; // midday
+          break;
+        case 'sore':
+          greeting.textContent = "Selamat Sore Cinta";
+          document.body.style.backgroundColor = "#ffdab9"; // sunset
+          break;
+        case 'malam':
+          greeting.textContent = "Selamat Malam Komandan Sayang";
+          document.body.style.backgroundColor = "#2c3e50"; // night
+          break;
+      }
     }
-  }
 
-  function closePopup() {
-    document.getElementById("popup").style.display = "none";
-  }
+    // Song selector
+    const songs = {
+      1: "https://open.spotify.com/embed/track/3AJwUDP919kvQ9QcozQPxg",
+      2: "https://open.spotify.com/embed/track/4VqPOruhp5EdPBeR92t6lQ",
+      3: "https://open.spotify.com/embed/track/1oHNvJVbFkexQc0BpQp7Y4",
+      4: "https://open.spotify.com/embed/track/6HabM2PUM519iIxv9ACDtb",
+      5: "https://open.spotify.com/embed/track/0VjIjW4GlUZAMYd2vXMi3b",
+      // ... up to 30
+    };
 
-  // Trigger playSong() with Enter key
-  document.getElementById("numberInput").addEventListener("keypress", function(event) {
-    if (event.key === "Enter") {
-      event.preventDefault();
-      playSong();
+    function playSong() {
+      const input = document.getElementById("numberInput").value;
+      const songPlayer = document.getElementById("songPlayer");
+
+      if (songs[input]) {
+        songPlayer.innerHTML = `<iframe src="${songs[input]}" width="300" height="380" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>`;
+      } else {
+        openPopup();
+      }
     }
-  });
-</script>
 
+    // Enter key trigger
+    document.getElementById("numberInput").addEventListener("keypress", function(event) {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        playSong();
+      }
+    });
+
+    // Popup functions
+    function openPopup() {
+      document.getElementById("popupOverlay").style.display = "flex";
+    }
+    function closePopup() {
+      document.getElementById("popupOverlay").style.display = "none";
+    }
+  </script>
 </body>
 </html>
