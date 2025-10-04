@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Page 2</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      background-color: #f9f9f9;
+      font-family: Arial, sans-serif;
+      position: relative;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    h2 {
+      font-size: 1.2rem;
+      font-weight: normal;
+      font-family: "Helvetica Neue", sans-serif;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .search-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 30px;
+    }
+
+    input[type="text"] {
+      padding: 10px;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      width: 150px;
+    }
+
+    .btn {
+      font-size: 1rem;
+      font-family: "Helvetica Neue", sans-serif;
+      padding: 10px 20px;
+      background-color: black;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+
+    .btn:hover {
+      background-color: #444;
+    }
+
+    .top-btn {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      font-size: 0.9rem;
+      font-family: "Helvetica Neue", sans-serif;
+      padding: 8px 16px;
+      background-color: transparent;
+      color: black;
+      border: 1px solid black;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+
+    .top-btn:hover {
+      background-color: black;
+      color: white;
+    }
+
+    .popup {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      padding: 20px 30px;
+      border: 1px solid black;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+      display: none;
+      font-family: "Helvetica Neue", sans-serif;
+    }
+
+    .popup button {
+      margin-top: 10px;
+      padding: 5px 15px;
+      border: none;
+      background: black;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    #player {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Top-left button -->
+  <button class="top-btn" onclick="location.href='places.html'">Places you should go</button>
+
+  <h1>Selamat pagi cantik</h1>
+  <h2>Pilih angka menarikmu hari ini!</h2>
+
+  <div class="search-container">
+    <input type="text" id="numberInput" placeholder="1-30">
+    <button class="btn" onclick="playSong()">Enter</button>
+  </div>
+
+  <!-- Spotify player container -->
+  <div id="player"></div>
+
+  <!-- Popup -->
+  <div class="popup" id="popup">
+    <p>Dicoba lagi ya sayang :) Ingett it's only between 1-30</p>
+    <button onclick="closePopup()">OK</button>
+  </div>
+
+  <script>
+  // Mapping numbers 1-30 to Spotify songs
+  const songs = {
+    1: "https://open.spotify.com/embed/track/3AJwUDP919kvQ9QcozQPxg", // Ed Sheeran - Shape of You
+    2: "https://open.spotify.com/embed/track/0VjIjW4GlUZAMYd2vXMi3b", // The Weeknd - Blinding Lights
+    3: "https://open.spotify.com/embed/track/4uLU6hMCjMI75M1A2tKUQC", // Rick Astley - Never Gonna Give You Up
+    4: "https://open.spotify.com/embed/track/6habFhsOp2NvshLv26DqMb", // Dua Lipa - Levitating
+    5: "https://open.spotify.com/embed/track/7qiZfU4dY1lWllzX7mPBI3", // Ed Sheeran - Perfect
+    6: "https://open.spotify.com/embed/track/2Fxmhks0bxGSBdJ92vM42m", // Billie Eilish - bury a friend
+    7: "https://open.spotify.com/embed/track/0e7ipj03S05BNilyu5bRzt", // Olivia Rodrigo - drivers license
+    8: "https://open.spotify.com/embed/track/0tgVpDi06FyKpA1z0VMD4v", // Shawn Mendes, Camila Cabello - Señorita
+    9: "https://open.spotify.com/embed/track/3DarAbFujv6eYNliUTyqtz", // Lauv - I Like Me Better
+    10: "https://open.spotify.com/embed/track/2takcwOaAZWiXQijPHIx7B", // Coldplay - Viva La Vida
+    11: "https://open.spotify.com/embed/track/6EpRaXYhGOB3fj4V2uDkMJ", // Sam Smith - Stay With Me
+    12: "https://open.spotify.com/embed/track/0ofHAoxe9vBkTCp2UQIavz", // Jason Mraz - I'm Yours
+    13: "https://open.spotify.com/embed/track/0kkxsdcaWmWU2yWAqclDh3", // Justin Bieber - Peaches
+    14: "https://open.spotify.com/embed/track/1rqqCSm0Qe4I9rUvWncaom", // Dua Lipa - Don't Start Now
+    15: "https://open.spotify.com/embed/track/2b8fOow8UzyDFAE27YhOZM", // Taylor Swift - Love Story
+    16: "https://open.spotify.com/embed/track/0ofXAdFIQQRsCYj9754UFx", // John Mayer - Gravity
+    17: "https://open.spotify.com/embed/track/2RSHsoi04658QL5xgQVov3", // Khalid - Location
+    18: "https://open.spotify.com/embed/track/0V3wPSX9ygBnCm8psDIegu", // Post Malone - Circles
+    19: "https://open.spotify.com/embed/track/0pqnGHJpmpxLKifKRmU6WP", // Imagine Dragons - Believer
+    20: "https://open.spotify.com/embed/track/6QgjcU0zLnzq5OrUoSZ3OK", // Zedd, Alessia Cara - Stay
+    21: "https://open.spotify.com/embed/track/4wBA24GuWqlFfZ6uL65aXP", // Arctic Monkeys - Do I Wanna Know?
+    22: "https://open.spotify.com/embed/track/1V4jC0vJ5525lEF1bFgPX2", // Harry Styles - Watermelon Sugar
+    23: "https://open.spotify.com/embed/track/6Qyc6fS4DsZjB2mRW9DsQs", // Maroon 5 - Sugar
+    24: "https://open.spotify.com/embed/track/5ChkMS8OtdzJeqyybCc9R5", // Daft Punk - Get Lucky
+    25: "https://open.spotify.com/embed/track/7ouMYWpwJ422jRcDASZB7P", // Bruno Mars - Just the Way You Are
+    26: "https://open.spotify.com/embed/track/5nNmj1cLH3r4aA4XDJ2bgY", // Adele - Someone Like You
+    27: "https://open.spotify.com/embed/track/2nMeu6UenVvwUktBCpLMK9", // Lady Gaga, Bradley Cooper - Shallow
+    28: "https://open.spotify.com/embed/track/7BKLCZ1jbUBVqRi2FVlTVw", // The Chainsmokers - Closer
+    29: "https://open.spotify.com/embed/track/3USxtqRwSYz57Ewm6wWRMp", // OneRepublic - Counting Stars
+    30: "https://open.spotify.com/embed/track/6ktkj1B3SE9jNpylgLluwi"  // Rex Orange County - Loving Is Easy
+  };
+
+  function playSong() {
+    const number = parseInt(document.getElementById("numberInput").value);
+    const player = document.getElementById("player");
+
+    if (number >= 1 && number <= 30 && songs[number]) {
+      player.innerHTML = `<iframe style="border-radius:12px" src="${songs[number]}" 
+                          width="300" height="380" frameBorder="0" 
+                          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>`;
+    } else {
+      document.getElementById("popup").style.display = "block";
+    }
+  }
+
+  function closePopup() {
+    document.getElementById("popup").style.display = "none";
+  }
+
+  // Trigger playSong() with Enter key
+  document.getElementById("numberInput").addEventListener("keypress", function(event) {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      playSong();
+    }
+  });
+</script>
+
+</body>
+</html>
